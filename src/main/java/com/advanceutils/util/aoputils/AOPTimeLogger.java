@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.advanceutils.util.aop;
+package com.advanceutils.util.aoputils;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
