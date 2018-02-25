@@ -1,11 +1,12 @@
 package com.advanceutils.constants;
 
 public class Constants {
-	public final static String SHEET_NM = "OSI";
-	public final static String REPORT_NM = "OSI_Analysis";
+	public final static String SHEET_NM = "Sheet1";
+	public final static String REPORT_NM = "Sample_Sheet";
 	public static final String EMPTY = "";
 	public static final String NOVAL_IDENTIFIER = "_";
-	public static final String DEFAULT_FONT = "Calibri (Body)";	
+	public static final String DEFAULT_FONT = "Calibri (Body)";
+	public static final int THOUSAND = 1000;
 	
 	public enum ExportFormats {
 		XLS(".xls"), XLSX(".xlsx");
