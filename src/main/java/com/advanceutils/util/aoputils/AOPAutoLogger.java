@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class AOPAutoLogger {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Around("execution(* com.advanceutils.util..*.*(..))")
+  @Around("execution(* com.advanceutils.util..*.*(..)) && !@annotation(com.advanceutils.util.aoputils.AOPKiller)")
   public Object autoLog(ProceedingJoinPoint joinPoint) throws Throwable {
     Object retVal = null;
     try {

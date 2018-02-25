@@ -21,7 +21,7 @@ import org.springframework.util.StopWatch;
 public class AOPTimeLogger {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Around("execution(* com.advanceutils.util..*.*(..))")
+    @Around("execution(* com.advanceutils.util..*.*(..)) && !@annotation(com.advanceutils.util.aoputils.AOPKiller)")
     public Object timeMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch ticktock = new StopWatch();
         ticktock.start();
