@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.advanceutils.util;
+package com.advanceutils.util.misc;
 
 import java.util.HashMap;
 import java.util.Map;

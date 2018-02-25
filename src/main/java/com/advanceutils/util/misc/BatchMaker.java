@@ -1,33 +1,25 @@
-package com.advanceutils.util;
+package com.advanceutils.util.misc;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.advanceutils.constants.Constants;
 
 
 /**
  * @author sbansal
  *
  */
-public class BatchQueryHandler {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+public class BatchMaker {
 
 	/**
 	 * 
 	 * @param list
+	 * @param batchSize
 	 * @return dataList
-	 * This method is used to break the bigger list into sub-lists so that we can pass it in IN Clause as separate separate list
+	 * This method is used to break the bigger list into sub-lists so that we can pass it in (let's say) IN Clause as separate separate list
 	 * 
 	 */
 	
-	public List<List<Long>> batchUtils(List<Long> list) {
-		logger.debug("Come Inside the method of batchUtils");
-		int batchSize = Constants.THOUSAND;
+	public List<List<Long>> batch(List<Long> list, int batchSize) {
 		int incrementedValueByOne = 1;
 		int startedValueZero = 0;
 		List<List<Long>> dataList = new ArrayList<List<Long>>();

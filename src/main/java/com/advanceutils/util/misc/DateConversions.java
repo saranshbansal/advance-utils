@@ -1,4 +1,4 @@
-package com.advanceutils.util;
+package com.advanceutils.util.misc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,12 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for Date-Time conversion to standard formats used in Gartner applications
+ * Utility class for Date-Time conversion to standard formats.
  * 
  * @author sbansal
  */
-public class DateTimeConvertor {
-	private static final Logger log = LoggerFactory.getLogger(DateTimeConvertor.class);
+public class DateConversions {
+	private static final Logger log = LoggerFactory.getLogger(DateConversions.class);
 
 	// Define formats here
 	private static final SimpleDateFormat MMMDateFormat = new SimpleDateFormat("MMM");
