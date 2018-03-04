@@ -28,7 +28,7 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @PersistenceContext(unitName = "eptPersistenceUnit")
+    @PersistenceContext(unitName = "yourPersistenceUnit") // change as per your persistence unit's name.
     private EntityManager em;
 
     private final Class<T> type;

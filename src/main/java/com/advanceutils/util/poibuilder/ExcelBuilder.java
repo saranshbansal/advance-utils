@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.util.ResourceUtils;
 
 import com.advanceutils.constants.Constants;
 import com.advanceutils.constants.StyleAttribute;
@@ -209,14 +208,10 @@ public class ExcelBuilder {
 	 *
 	 * @return this instance
 	 */
-	public ExcelBuilder setHyperLink(String url, String hostName) {
-		String validatedUrl = url;
+	public ExcelBuilder setHyperLink(String url) {
 		CreationHelper createHelper = workbook.getCreationHelper();
 		Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
-		if(!ResourceUtils.isUrl(url)) {
-			validatedUrl = "http://" + hostName + url;
-		}
-		link.setAddress(validatedUrl);
+		link.setAddress(url);
 		Cell thisCell = row.getCell(nextColumnIdx - 1); // because column is incremented after building new cell.
 		thisCell.setHyperlink(link);
 		thisCell.setCellStyle(getCellStyle(StyleAttribute.HYPERLINK));
