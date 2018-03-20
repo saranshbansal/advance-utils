@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -23,8 +24,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.enterprisemath.utils.ValidationUtils;
 
 /**
  * Excel Report Generator Design: Based on Builder Design Pattern Features:
@@ -120,7 +119,7 @@ public class ExcelBuilder {
 		if (StringUtils.isNotBlank(cellValue)) {
 			setColumnSize(nextColumnIdx,
 					cellValue.length() > Constants.ColumnWidths.MAX_WIDTH.val() ? Constants.ColumnWidths.MAX_WIDTH.val()
-							: cellValue.length()); // set max 70 characters for size
+							: cellValue.length()); // set max 50 characters for size
 		} else {
 			setColumnSize(nextColumnIdx, Constants.ColumnWidths.DEF_WIDTH.val()); // set default 30 characters for size
 		}
@@ -134,7 +133,7 @@ public class ExcelBuilder {
 
 	/**
 	 * Build custom rows based on row data (comma separated) & styles provided by the user.
-	 * 
+	 * To leave a cell unstylized, just pass `_` identifier in the data field
 	 * @param rowData
 	 * @param defSectionAttrs
 	 * @return
@@ -195,11 +194,10 @@ public class ExcelBuilder {
 	 * @return this instance
 	 */
 	public ExcelBuilder setRowHeight(int pts) {
-		ValidationUtils.guardEquals(0, nextColumnIdx, "must be called before inserting columns");
 		row.setHeightInPoints(pts);
 		return this;
 	}
-
+	
 	/**
 	 * Sets hyperlink on current column.
 	 * @param hostName 
@@ -208,14 +206,29 @@ public class ExcelBuilder {
 	 */
 	public ExcelBuilder setHyperLink(String url) {
 		CreationHelper createHelper = workbook.getCreationHelper();
-		Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
+        Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
 		link.setAddress(url);
 		Cell thisCell = row.getCell(nextColumnIdx - 1); // because column is incremented after building new cell.
 		thisCell.setHyperlink(link);
 		thisCell.setCellStyle(getCellStyle(StyleAttribute.HYPERLINK));
 		return this;
 	}
-
+	
+	/**
+	 * Highlight current cell.
+	 * @param flag to set highlight or not
+	 * @param optional styles
+	 *
+	 * @return this instance
+	 */
+	public ExcelBuilder setCellHighlight(boolean flg, StyleAttribute... styles) {
+		if(flg) {
+			Cell thisCell = row.getCell(nextColumnIdx - 1); // because column is incremented after building new cell.
+			thisCell.setCellStyle(getCellStyle(styles));
+		}
+		return this;
+	}
+	
 	/**
 	 * @return
 	 */
@@ -241,7 +254,9 @@ public class ExcelBuilder {
 		font.setFontName(Constants.DEFAULT_FONT);
 		style.setFont(font);
 		for (StyleAttribute attr : allattrs) {
-			if (attr.equals(StyleAttribute.FONT_SIZE12)) {
+			if(attr.equals(StyleAttribute.FONT_ARIAL)) {
+				font.setFontName(HSSFFont.FONT_ARIAL);
+			} else if (attr.equals(StyleAttribute.FONT_SIZE12)) {
 				font.setFontHeightInPoints((short) 12);
 			} else if (attr.equals(StyleAttribute.FONT_SIZE11)) {
 				font.setFontHeightInPoints((short) 11);
@@ -249,6 +264,8 @@ public class ExcelBuilder {
 				font.setFontHeightInPoints((short) 10);
 			} else if (attr.equals(StyleAttribute.BOLD)) {
 				font.setBold(true);
+			} else if (attr.equals(StyleAttribute.BLACK_FONT)) {
+				font.setColor(IndexedColors.BLACK.index);
 			} else if (attr.equals(StyleAttribute.THIN_BORDER_ALL)) {
 				style.setBorderTop(BorderStyle.THIN);
 				style.setBorderLeft(BorderStyle.THIN);
@@ -266,12 +283,14 @@ public class ExcelBuilder {
 				style.setAlignment(HorizontalAlignment.LEFT);
 			} else if (attr.equals(StyleAttribute.ALIGN_CENTER)) {
 				style.setAlignment(HorizontalAlignment.CENTER);
-			} else if (attr.equals(StyleAttribute.GARTNER_BLUE_BACKGROUND)) {
+			} else if (attr.equals(StyleAttribute.BLUE_BACKGROUND)) {
 				style.setFillForegroundColor(IndexedColors.DARK_BLUE.index);
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			} else if (attr.equals(StyleAttribute.YELLOW_BACKGROUND)) {
 				style.setFillForegroundColor(IndexedColors.YELLOW.index);
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			} else if (attr.equals(StyleAttribute.GREY_25_PERCENT_BACKGROUND)) {
+				style.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.index);
 			} else if (attr.equals(StyleAttribute.WHITE_FONT)) {
 				font.setColor(IndexedColors.WHITE.index);
 			} else if (attr.equals(StyleAttribute.WORD_WRAP)) {

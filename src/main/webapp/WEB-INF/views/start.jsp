@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
-<%@ page import="com.advanceutils.constants.Constants"%>
+<%@ page import="com.advanceutils.constants.CommonInternalConstants"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,6 +11,6 @@
 <body>
 	<div id="app"></div>
 	<<%-- script type="text/javascript"
-		src="<%=request.getContextPath()%>/app/dist/bundle.js?v=<%=Constants.VERSIONJS%>"></script> --%>
+		src="<%=request.getContextPath()%>/app/dist/bundle.js?v=<%=CommonInternalConstants.VERSIONJS%>"></script> --%>
 </body>
 </html>

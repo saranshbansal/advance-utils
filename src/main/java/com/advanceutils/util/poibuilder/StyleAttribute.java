@@ -7,11 +7,19 @@ public enum StyleAttribute {
 	/**
 	 * Blue background
 	 */
-	GARTNER_BLUE_BACKGROUND,
+	BLUE_BACKGROUND,
 	/**
 	 * Yellow background
 	 */
 	YELLOW_BACKGROUND,
+	/**
+	 * 
+	 */
+	BLACK_FONT,
+	/**
+	 * 
+	 */
+	GREY_25_PERCENT_BACKGROUND,
 	/**
 	 * White Font
 	 */
@@ -28,6 +36,10 @@ public enum StyleAttribute {
 	 * Thin bottom border.
 	 */
 	THIN_BOTTOM_BORDER,
+	/**
+	 * 
+	 */
+	FILL_BORDER_MEDIUM,
 	/**
 	 * Thick top border.
 	 */
@@ -67,5 +79,10 @@ public enum StyleAttribute {
 	/**
 	 * 
 	 */
-	HYPERLINK
+	HYPERLINK,
+	/**
+	 * 
+	 */
+	FONT_ARIAL,
+	
 }
