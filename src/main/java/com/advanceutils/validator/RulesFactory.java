@@ -60,7 +60,7 @@ class LengthValidationRule implements Rule {
 
 }
 
-class ExistenceValidationRule implements Rule {
+class MappedValidationRule implements Rule {
 
 	@SuppressWarnings("rawtypes")
 	private static Map<String, List> existencehMap = new HashMap<>();
@@ -164,9 +164,9 @@ public class RulesFactory {
 		} else if (StringUtils.equalsIgnoreCase(attr, "param3")) {
 			return Arrays.asList(new EmptinessValidationRule(), new DateFormatValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param4")) {
-			return Arrays.asList(new EmptinessValidationRule(), new ExistenceValidationRule());
+			return Arrays.asList(new EmptinessValidationRule(), new MappedValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param5")) {
-			return Arrays.asList(new EmptinessValidationRule(), new ExistenceValidationRule());
+			return Arrays.asList(new EmptinessValidationRule(), new MappedValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param6")) {
 			return Arrays.asList(new LengthValidationRule());
 		}

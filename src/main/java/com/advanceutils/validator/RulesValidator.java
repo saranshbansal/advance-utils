@@ -2,7 +2,6 @@ package com.advanceutils.validator;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +9,11 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-public class Validator {
-	private static Logger log = Logger.getLogger(Validator.class);
+public class RulesValidator {
+	private static Logger log = Logger.getLogger(RulesValidator.class);
 
 	/**
 	 * @param Requests
@@ -63,16 +63,24 @@ public class Validator {
 								errmsg.append(" Length exceeds |");
 							}
 						}
-						if(r instanceof ExistenceValidationRule) {
-							if(!((ExistenceValidationRule) r).validate(fieldName, fieldValue)) {
+						if(r instanceof MappedValidationRule) {
+							if(!((MappedValidationRule) r).validate(fieldName, fieldValue)) {
 								++count;
 								errmsg.append(" Invalid key |");
 							}
 						}
-						if(r instanceof DateValidationRule) {
-							if(!(Date.class.isAssignableFrom(field.getType()) && ((DateValidationRule) r).validate(fieldName, fieldValue))) {
+						if(r instanceof DateFormatValidationRule) {
+							if(!((DateFormatValidationRule) r).validate(fieldName, fieldValue, "dd MMM yyyy")) {
 								++count;
-								errmsg.append(" Invalid date or format |");
+								errmsg.append(" Invalid date or format(dd MMM yyyy) |");
+							}
+						}
+						if(r instanceof TypeValidationRule) {
+							if (StringUtils.equalsIgnoreCase(fieldName, "param1")) {
+								if(!((TypeValidationRule) r).validate(fieldName, fieldValue, Integer.class)) {
+									++count;
+									errmsg.append(" Invalid data type |");
+								}
 							}
 						}
 					} catch (IllegalArgumentException | IllegalAccessException e) {
