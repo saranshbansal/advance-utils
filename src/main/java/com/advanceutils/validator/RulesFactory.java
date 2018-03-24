@@ -1,12 +1,14 @@
 package com.advanceutils.validator;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -17,9 +19,9 @@ import org.apache.commons.lang.StringUtils;
 interface Rule {
 	public boolean validate(String fieldName, Object value);
 }
-
 class EmptinessValidationRule implements Rule {
 
+	@SuppressWarnings("rawtypes")
 	public boolean validate(String fieldName, Object value) {
 		boolean flg = false;
 		if (value instanceof String) {
@@ -27,7 +29,7 @@ class EmptinessValidationRule implements Rule {
 		} else if (value instanceof Long || value instanceof Integer) {
 			flg = null != value;
 		} else if (value instanceof List) {
-			// flg = work under progress!;
+			flg = CollectionUtils.isNotEmpty((List) value);
 		} else if (value instanceof Date) {
 			flg = null != value;
 		}
@@ -41,17 +43,19 @@ class LengthValidationRule implements Rule {
 	private static Map<String, Integer> lengthMap = new HashMap<>();
 
 	static {
-		lengthMap.put("accountCode", 8);
-		lengthMap.put("accountNm", 500);
-		lengthMap.put("seatholderNm", 500);
-		lengthMap.put("stakeholderNm", 2000);
-		lengthMap.put("requesterDescription", 2000);
-		lengthMap.put("otherComments", 2000);
+		lengthMap.put("param1", 8);
+		lengthMap.put("param2", 500);
+		lengthMap.put("param3", 500);
+		lengthMap.put("param4", 2000);
+		lengthMap.put("param5", 2000);
 	}
 
 	public boolean validate(String fieldName, Object value) {
-		int maxLen = lengthMap.get(fieldName);
-		return null == value || StringUtils.isBlank(value.toString()) || value.toString().length() <= maxLen;
+		if (null != value) {
+			int maxLen = lengthMap.get(fieldName);
+			return value.toString().length() <= maxLen;
+		}
+		return true;
 	}
 
 }
@@ -72,29 +76,75 @@ class ExistenceValidationRule implements Rule {
 
 	@SuppressWarnings("unchecked")
 	public boolean validate(String fieldName, Object value) {
-		if (null == value)
-			return false;
-		List<String> trueValues = existencehMap.get(fieldName);
-		String valideEnum = trueValues.stream().filter(obj -> obj.equalsIgnoreCase(value.toString())).findAny()
-				.orElse(null);
-		return StringUtils.isNotBlank(valideEnum);
+		if (null != value) {
+			List<String> trueValues = existencehMap.get(fieldName);
+			String valideEnum = trueValues.stream().filter(obj -> obj.equalsIgnoreCase(value.toString())).findAny()
+					.orElse(null);
+			return null != valideEnum;
+		}
+		return true;
 	}
 
 }
 
-class DateValidationRule implements Rule {
+class DateFormatValidationRule implements Rule {
+
+	private String format;
 
 	@Override
 	public boolean validate(String fieldName, Object value) {
-		Calendar cal = Calendar.getInstance();
-		cal.setLenient(false);
-		try {
-			cal.setTime((Date) value);
-			cal.getTime();
-		} catch (Exception e) {
-			return false;
+		if (null != value) {
+			try {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+				LocalDate date = LocalDate.parse(value.toString(), formatter);
+				date.format(formatter);
+			} catch (Exception e) {
+				return false;
+			}
 		}
 		return true;
+	}
+
+	public boolean validate(String fieldName, Object value, String format) {
+		this.format = format;
+		return validate(fieldName, value);
+	}
+}
+
+class TypeValidationRule implements Rule {
+
+	@SuppressWarnings("rawtypes")
+	private Class clazz;
+
+	@Override
+	public boolean validate(String fieldName, Object value) {
+		if (null != value) {
+			try {
+				if (Integer.class.getName() == clazz.getName()) {
+					Integer.parseInt(value.toString());
+				}
+				if (Long.class.getName() == clazz.getName()) {
+					Long.parseLong(value.toString());
+				}
+				if (String.class.getName() == clazz.getName()) {
+					value.toString();
+				}
+				if (Date.class.getName() == clazz.getName()) {
+					// better to use date format validator 
+					// here because of the specific format provided by user
+					// which simplifies validations.
+				}
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public boolean validate(String fieldName, Object fieldValue, Class clazz) {
+		this.clazz = clazz;
+		return validate(fieldName, fieldValue);
 	}
 
 }
@@ -108,11 +158,11 @@ public class RulesFactory {
 
 	public static List<Rule> get(String attr) {
 		if (StringUtils.equalsIgnoreCase(attr, "param1")) {
-			return Arrays.asList(new EmptinessValidationRule(), new LengthValidationRule());
+			return Arrays.asList(new EmptinessValidationRule(), new LengthValidationRule(), new TypeValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param2")) {
 			return Arrays.asList(new EmptinessValidationRule(), new LengthValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param3")) {
-			return Arrays.asList(new EmptinessValidationRule(), new DateValidationRule());
+			return Arrays.asList(new EmptinessValidationRule(), new DateFormatValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param4")) {
 			return Arrays.asList(new EmptinessValidationRule(), new ExistenceValidationRule());
 		} else if (StringUtils.equalsIgnoreCase(attr, "param5")) {
