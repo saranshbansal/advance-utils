@@ -13,7 +13,7 @@ export const sortBy = (arr, property) => {
 // get specific property list back from array of objects
 export const findBy = (arr, property, checkAgainstValue, returnProperty) => {
     let filteredObj = arr ? arr.filter(el => el[property] === checkAgainstValue) : null;
-    return filteredObj[0] ? filteredObj[0][returnProperty] : null;
+    return filteredObj[0] ? returnProperty ? filteredObj[0][returnProperty] : filteredObj[0] : null;
 }
 
 // get object back from list by any property
@@ -37,12 +37,26 @@ export const formatStringToArr = (str, delim, pre) => {
 }
 
 // push value to array as an object mapped by given key/id
-export const pushIntoArray = (arr, str, id) => {
-    const objIndex = (arr && arr.length > 0) ? arr.findIndex((obj => obj.id === id)) : -1;
+export const pushIntoManualMCPsArray = (arr, str, id, pre) => {
+    const objIndex = (arr && arr.length > 0) ? arr.findIndex((obj => obj.id === pre + id)) : -1;
     if (objIndex > -1) {
         arr[objIndex].name = str;
     } else {
-        arr.push({ id: id, name: str });
+        arr.push({ id: pre + id, name: str });
     }
     return arr || [];
 }
+
+export const joinArray = (arr1, arr2) => {
+    if (!arr1) {
+        return arr2 || [];
+    }
+    if (!arr2) {
+        return arr1 || [];
+    }
+    return arr1.reduceRight((prev, curr) => {
+        prev.unshift(curr);
+        return prev;
+    }, arr2);
+}
+
